@@ -26,7 +26,8 @@ class Register extends BaseClass{
             }
 
             let params = {
-            	openid: '1234',
+            	openid: '',
+	            email: 'fafsdf'
             }
             let hasUser = await this.checkHasUser(params);
             if (hasUser) {
@@ -36,8 +37,8 @@ class Register extends BaseClass{
             debugger
             let result = await this.UserModel.addNewUser({
 	            openid: '12312',
-	            email: 'fafsdf',
-	            password: 'sssss',
+	            email: this.param.email,
+	            password: this.param.password,
             })
 	        
 	        console.log(result)

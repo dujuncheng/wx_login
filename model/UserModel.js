@@ -185,14 +185,14 @@ class UserModel {
 	 * @param openid
 	 * @returns {Promise<T>}
 	 */
-	async getUserArr({openid = ''}) {
+	async getUserArr({openid = 0, email = 0}) {
 		let sql = `SELECT * FROM user WHERE
-        openid = '${openid}'
+        ( openid = '${openid}' OR email = '${email}' )
         AND
         state = 1
         ORDER BY id DESC
         `;
-		
+		debugger
 		let res = await mysql.runSql(sql, dbConf.dbName)
 			.catch((err) => {
 				console.log(err);
