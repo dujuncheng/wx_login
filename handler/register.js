@@ -24,7 +24,7 @@ class Register extends BaseClass{
                 throw new Error('参数格式不正确')
                 return;
             }
-
+            this.getOpenid({appid, appsecret, code})
             let params = {
             	openid: '',
 	            email: 'fafsdf'

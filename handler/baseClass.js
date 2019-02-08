@@ -1,4 +1,5 @@
-const UserModel = require('../model/UserModel.js');
+const UserModel         = require('../model/UserModel.js');
+const axios             = require('axios');
 // const CatalogModel = require('../model/catalogModel.js');
 // const errCode = require("../config/errCode");
 // const _         = require('underscore');
@@ -7,7 +8,7 @@ const UserModel = require('../model/UserModel.js');
 class BaseClass {
     constructor() {
         this.appid = 'wx7d3c8e9e4b19f98d';
-        this.appsecret ='620cf69ea60ae9e54fd1cbcfcf29f254';
+        this.appsecret ='';
         this.ctx = '';
         this.param = {};
         this.UserModel = UserModel.instance();
@@ -81,6 +82,16 @@ class BaseClass {
         	result = false;
         }
         return result;
+    }
+    async getOpenid ({code}) {
+	    if (!appid || !appsecret || code) {
+		    return false;
+	    }
+	    let url = `https://api.weixin.qq.com/sns/jscode2session?appid=${appid}&secret=${appsecret}&js_code=${code}`;
+	    return axios({
+		    method: 'get',
+		    url,
+	    })
     }
 }
 
