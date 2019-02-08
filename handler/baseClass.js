@@ -83,15 +83,30 @@ class BaseClass {
         }
         return result;
     }
-    async getOpenid ({code}) {
-	    if (!appid || !appsecret || code) {
+	
+	/**
+	 * 向微信换openid
+	 * @param code
+	 * @returns {Promise<*>}
+	 */
+	async getOpenid ({code}) {
+	    if (!this.appid || !this.appsecret || code) {
 		    return false;
 	    }
-	    let url = `https://api.weixin.qq.com/sns/jscode2session?appid=${appid}&secret=${appsecret}&js_code=${code}`;
-	    return axios({
+	    let url = `https://api.weixin.qq.com/sns/jscode2session?appid=${this.appid}&secret=${this.appsecret}&js_code=${code}`;
+	    let result = await axios({
 		    method: 'get',
 		    url,
 	    })
+	    
+	    if (result.status !== 200 ||
+		    !result.data ||
+		    !result.data.openid ||
+		    !result.session_key) {
+		    return new Error( result.data || '使用code向微信换openid失败')
+	    }
+	    
+	    return result
     }
 }
 
