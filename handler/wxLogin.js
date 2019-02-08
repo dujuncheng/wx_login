@@ -5,7 +5,7 @@ const axios             = require('axios');
 const BaseClass = require('./baseClass.js');
 
 
-class AddNewCatalog extends BaseClass{
+class wxLogin extends BaseClass{
     constructor() {
         super();
     }
@@ -55,5 +55,5 @@ class AddNewCatalog extends BaseClass{
 }
 
 
-module.exports = AddNewCatalog;
+module.exports = wxLogin;
 

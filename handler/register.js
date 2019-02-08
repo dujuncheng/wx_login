@@ -24,7 +24,9 @@ class Register extends BaseClass{
                 throw new Error('参数格式不正确')
                 return;
             }
-             await this.getOpenid({code: this.param.code})
+            debugger
+	        // 换取微信的openid
+            let {openid} = await this.getOpenid({code: this.param.code})
             let params = {
             	openid: '',
 	            email: 'fafsdf'
@@ -34,7 +36,6 @@ class Register extends BaseClass{
                 throw new Error('数据库中已经存在该数据')
 	            return
             }
-            debugger
             let result = await this.UserModel.addNewUser({
 	            openid: '12312',
 	            email: this.param.email,

@@ -63,7 +63,6 @@ class UserModel {
 	     email,
 	     password
 	}) {
-		debugger
 		if (
 			_.isUndefined(openid) ||
 			_.isUndefined(email) ||
@@ -73,7 +72,6 @@ class UserModel {
 			throw new Error('写入数据库参数缺失');
 			return
 		}
-		debugger
 		let fieldStr = dbConf.UserTableField.join(',');
 		
 		let valueArr = [];
@@ -192,7 +190,6 @@ class UserModel {
         state = 1
         ORDER BY id DESC
         `;
-		debugger
 		let res = await mysql.runSql(sql, dbConf.dbName)
 			.catch((err) => {
 				console.log(err);

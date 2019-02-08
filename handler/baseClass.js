@@ -90,6 +90,7 @@ class BaseClass {
 	 * @returns {Promise<*>}
 	 */
 	async getOpenid ({code}) {
+		debugger
 	    if (!this.appid || !this.appsecret || code) {
 		    return false;
 	    }
