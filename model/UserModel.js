@@ -46,57 +46,50 @@ class UserModel {
 	}
 	
 	/**
-	 *  增加一条笔记的记录
-	 * @param fileName
-	 * @param filePath
-	 * @param notifyTime
-	 * @param content
-	 * @returns {Promise<T>}
+	 * 增加一个新用户记录
+	 * @param openid
+	 * @param avater
+	 * @param nickname
+	 * @param address
+	 * @param email
+	 * @param password
+	 * @returns {Promise<void>}
 	 */
-	async addNewNote(
-		note_id,
-		user_id,
-		catalog_id,
-		title,
-		content,
-		notify_time,
-	) {
+	async addNewUser({
+	     openid,
+	     avater = '',
+	     nickname = '',
+	     address = '',
+	     email,
+	     password
+	}) {
+		debugger
 		if (
-			_.isUndefined(note_id) ||
-			_.isUndefined(user_id) ||
-			_.isUndefined(catalog_id) ||
-			_.isUndefined(notify_time)
+			_.isUndefined(openid) ||
+			_.isUndefined(email) ||
+			_.isUndefined(password)
 		
 		) {
 			throw new Error('写入数据库参数缺失');
 			return
 		}
-		
-		if (!title) {
-			title = '';
-		}
-		
-		if (!content) {
-			content = '';
-		}
-		
-		let fieldStr = dbConf.noteTableField.join(',');
+		debugger
+		let fieldStr = dbConf.UserTableField.join(',');
 		
 		let valueArr = [];
 		valueArr.push(0);
-		valueArr.push(note_id);
-		valueArr.push(user_id);
-		valueArr.push(catalog_id);
-		valueArr.push(title);
-		valueArr.push(content);
-		valueArr.push(notify_time);
-		valueArr.push(0);
+		valueArr.push(openid);
+		valueArr.push(avater || '');
+		valueArr.push(nickname || '');
+		valueArr.push(address || '');
+		valueArr.push(email);
+		valueArr.push(password);
 		valueArr.push(1);
 		valueArr.push(Date.now() / 1000);
 		valueArr.push(Date.now() / 1000);
 		
 		
-		const sql = `INSERT INTO note_table (${fieldStr}) VALUES (?,?,?,?,?,?,?,?,?,?,?)`;
+		const sql = `INSERT INTO user (${fieldStr}) VALUES (?,?,?,?,?,?,?,?,?,?)`;
 		let result = await mysql.bindSql(sql, valueArr, dbConf.dbName);
 		return result;
 	}
@@ -193,7 +186,7 @@ class UserModel {
 	 * @returns {Promise<T>}
 	 */
 	async getUserArr({openid = ''}) {
-		let sql = `SELECT * FROM note_table WHERE
+		let sql = `SELECT * FROM user WHERE
         openid = '${openid}'
         AND
         state = 1

@@ -72,9 +72,9 @@ class BaseClass {
 	 * @param openid
 	 * @returns {boolean}
 	 */
-	checkHasUser ({openid}) {
+	async checkHasUser ({openid}) {
     	let result = false;
-        let userArr = this.UserModel.getUserArr({openid});
+        let userArr = await this.UserModel.getUserArr({openid});
         if (userArr.length === 1) {
 	        result = true;
         } else {
@@ -82,7 +82,6 @@ class BaseClass {
         }
         return result;
     }
-    
 }
 
 

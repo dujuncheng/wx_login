@@ -26,25 +26,29 @@ class Register extends BaseClass{
             }
 
             let params = {
-            	openid: this.param.openid,
+            	openid: '1234',
             }
-            let hasUser = this.checkHasUser(params);
+            let hasUser = await this.checkHasUser(params);
             if (hasUser) {
                 throw new Error('数据库中已经存在该数据')
 	            return
             }
-            
-            this.addNewUser();
-            
+            debugger
+            let result = await this.UserModel.addNewUser({
+	            openid: '12312',
+	            email: 'fafsdf',
+	            password: 'sssss',
+            })
 	        
-            if (result.status !== 200 ||
-                !result.data ||
-                !result.data.openid ||
-                !result.session_key) {
-                throw new Error( result.data || '使用code向微信换openid失败')
-            }
-
-
+	        console.log(result)
+	        
+	        if (result) {
+		        ctx.body = {
+			        success: true,
+			        message: '恭喜你，注册成功'
+		        }
+	        }
+	        
 
         } catch (e) {
             ctx.body = {
