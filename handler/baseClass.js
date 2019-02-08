@@ -1,10 +1,12 @@
 const UserModel         = require('../model/UserModel.js');
 const axios             = require('axios');
+const Redis             = require('ioredis');
+const Token             = require('../common/jwt.js');
 // const CatalogModel = require('../model/catalogModel.js');
 // const errCode = require("../config/errCode");
 // const _         = require('underscore');
 
-
+const redis = new Redis();
 class BaseClass {
     constructor() {
         this.appid = 'wx7d3c8e9e4b19f98d';
@@ -12,7 +14,7 @@ class BaseClass {
         this.ctx = '';
         this.param = {};
         this.UserModel = UserModel.instance();
-        // this.CatalogModel = CatalogModel.instance();
+        this.redis = redis;
     }
     async handler(ctx, next) {
         this.ctx = ctx;
@@ -109,7 +111,27 @@ class BaseClass {
 	    
 	    return result
     }
+	
+	/**
+	 * 生成自己的session字符串
+	 * @param sessionKey
+	 * @param openid
+	 * @returns {*}
+	 */
+    get3rdSession ({sessionKey, openid}) {
+		if (!sessionKey || !openid) {
+			return false;
+		}
+		let payload = {
+			sessionKey,
+			openid,
+			timestamp: (new Date()).getTime(),
+			random: (Math.random()).toFixed(2),
+		}
+	    let session3rd = Token.encode(payload);
+	    return session3rd;
+    }
+    
 }
-
 
 module.exports = BaseClass;

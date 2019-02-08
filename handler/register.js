@@ -24,8 +24,13 @@ class Register extends BaseClass{
                 throw new Error('参数格式不正确')
                 return;
             }
-            debugger
-	        // 换取微信的openid
+            
+            
+            // 存入redis缓存
+	        this.redis.set('foo', 'bar');
+            let foo = await this.redis.get('foo');
+            
+	        换取微信的openid
             let {openid} = await this.getOpenid({code: this.param.code})
             let params = {
             	openid: '',
@@ -41,9 +46,9 @@ class Register extends BaseClass{
 	            email: this.param.email,
 	            password: this.param.password,
             })
-	        
+
 	        console.log(result)
-	        
+
 	        if (result) {
 		        ctx.body = {
 			        success: true,
