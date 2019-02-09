@@ -39,14 +39,13 @@ class Register extends BaseClass{
                 return;
             }
             
-            
-            // 存入redis缓存
-	        // this.redis.set('foo', 'bar');
-            // let foo = await this.redis.get('foo');
-            
 	        // 换取微信的openid, session_key
 	        debugger
             let {openid, session_key} = await this.getOpenid({code: this.param.code})
+	        if (!openid || !session_key) {
+	        	throw new Error('获取微信openId失败')
+		        return
+	        }
             let params = {
             	openid,
 	            email: this.param.email
@@ -64,7 +63,19 @@ class Register extends BaseClass{
 	            nickname: this.param.nickname || '0',
 	            address: this.param.nickname || '0'
             })
-
+	
+	        // 存入redis缓存的 session3rd: {openid, session_key}
+	        let session3rd = this.get3rdSession({
+		        sessionKey: session_key,
+		        openid,
+	        })
+	        let cacheSession = {
+            	openid,
+		        session_key
+	        }
+	        this.redis.set(session3rd, cacheSession, 'ex', 60 * 5);
+         
+         
 	        console.log(result)
 
 	        if (result) {
