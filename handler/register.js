@@ -18,7 +18,7 @@ class Register extends BaseClass{
             }
             
             // type 1 是不带头像昵称的注册，type 2是带头像昵称的注册
-	        if (Number(this.param.type ) === 2) {
+	        if (Number(this.param.type) === 2) {
 	        	let avater = this.getRequestParam('avater');
 	        	let nickname = this.getRequestParam('nickname');
 	        	let address = this.getRequestParam('address');
@@ -61,7 +61,7 @@ class Register extends BaseClass{
 	            password: this.param.password,
 	            avater: this.param.avater || '0',
 	            nickname: this.param.nickname || '0',
-	            address: this.param.nickname || '0'
+	            address: this.param.address || '0'
             })
 	
 	        // 存入redis缓存的 session3rd: {openid, session_key}
