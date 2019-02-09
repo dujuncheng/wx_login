@@ -129,7 +129,25 @@ class BaseClass {
 	    let session3rd = Token.encode(payload);
 	    return session3rd;
     }
-    
+	
+	/**
+	 * 存入到redis缓存中去
+	 * @param session_key
+	 * @param openid
+	 * @returns {Promise<*>}
+	 */
+	async setSession ({session_key, openid}) {
+		let session3rd = this.get3rdSession({
+			sessionKey: session_key,
+			openid,
+		})
+		let cacheSession = {
+			openid,
+			session_key
+		}
+		await this.redis.set(session3rd, JSON.stringify(cacheSession), 'ex', 60 * 5);
+		return session3rd
+	}
 }
 
 module.exports = BaseClass;

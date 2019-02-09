@@ -11,9 +11,11 @@ class wxLogin extends BaseClass{
     }
     async run(ctx, next) {
         try {
+        	debugger
             // 检查params
             let paramsOk = this.checkParams(['code']);
             if (!paramsOk) {
+	            throw new Error('参数格式不正确')
                 return next();
             }
 
@@ -22,17 +24,26 @@ class wxLogin extends BaseClass{
                 return;
             }
 
-            let result = await this.askWx()
+            // 获取openid
+            let {openid, session_key} = await this.getOpenid({
+	            code: this.param.code
+            })
 	        
-            if (result.status !== 200 ||
-                !result.data ||
-                !result.data.openid ||
-                !result.session_key) {
-                throw new Error( result.data || '使用code向微信换openid失败')
-            }
-
-
-
+	        // err_code 1 该用户没有注册
+	        let hasUser = await this.checkHasUser({openid})
+	        if (!hasUser) {
+	        	this.responseFail('该用户没有注册，去注册', 1)
+	        }
+	        // 存入redis缓存的 session3rd: {openid, session_key}
+	        let session3rd = await this.setSession({session_key, openid});
+	        
+	        ctx.body = {
+		        success: true,
+		        data: {
+			        session: session3rd,
+		        },
+		        message: '恭喜你，登录成功'
+	        }
         } catch (e) {
             ctx.body = {
                 success: false,

@@ -65,15 +65,7 @@ class Register extends BaseClass{
             })
 	
 	        // 存入redis缓存的 session3rd: {openid, session_key}
-	        let session3rd = this.get3rdSession({
-		        sessionKey: session_key,
-		        openid,
-	        })
-	        let cacheSession = {
-            	openid,
-		        session_key
-	        }
-	        this.redis.set(session3rd, JSON.stringify(cacheSession), 'ex', 60 * 5);
+	        let session3rd = await this.setSession({session_key, openid});
          
             // 从数据库中获取该用户的信息
 	        let userArr = await this.UserModel.getUserByOpenid(openid);
