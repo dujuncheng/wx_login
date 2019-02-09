@@ -40,12 +40,12 @@ class Register extends BaseClass{
             }
             
 	        // 换取微信的openid, session_key
-	        debugger
             let {openid, session_key} = await this.getOpenid({code: this.param.code})
 	        if (!openid || !session_key) {
 	        	throw new Error('获取微信openId失败')
 		        return
 	        }
+	        // 检查该用户是否已经被注册过
             let params = {
             	openid,
 	            email: this.param.email
@@ -80,7 +80,7 @@ class Register extends BaseClass{
 		        ctx.body = {
 			        success: true,
 			        data: {
-			        	cache_session: cacheSession
+			        	cache_session: session3rd
 			        },
 			        message: '恭喜你，注册成功'
 		        }

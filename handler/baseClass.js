@@ -96,16 +96,14 @@ class BaseClass {
 		    return false;
 	    }
 	    let url = `https://api.weixin.qq.com/sns/jscode2session?appid=${this.appid}&secret=${this.appsecret}&js_code=${code}`;
-	    debugger
 	    let result = await axios({
 		    method: 'get',
 		    url,
 	    })
-	    
 	    if (result.status !== 200 ||
 		    !result.data ||
 		    !result.data.openid ||
-		    !result.session_key) {
+		    !result.data.session_key) {
 		    return new Error( result.data || '使用code向微信换openid失败')
 	    }
 	    

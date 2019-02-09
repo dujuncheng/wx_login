@@ -10,7 +10,6 @@ class wxLogin extends BaseClass{
         super();
     }
     async run(ctx, next) {
-        debugger
         try {
             // 检查params
             let paramsOk = this.checkParams(['code']);
