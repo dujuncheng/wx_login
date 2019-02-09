@@ -64,9 +64,10 @@ class userInfo extends BaseClass{
 			
 			let user = userArr[0]
 			let data = {
+				id: user.id,
 				avater: user.avater,
 				nickname: user.nickname,
-				adderss: user.address,
+				address: user.address,
 				email: user.email,
 				openid: user.openid,
 			}
