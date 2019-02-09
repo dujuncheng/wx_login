@@ -11,36 +11,70 @@ class userInfo extends BaseClass{
 	}
 	async run(ctx, next) {
 		try {
+			debugger
 			// 检查是否登录态是否有效
 			let clientSession = ctx.headers['x-session'];
 			if (!clientSession || typeof clientSession !== 'string') {
-				throw new Error('错误')
-				return
+				ctx.body = {
+					success: false,
+					err_code: 0,
+					message: '没有登录态哦，请重新登录'
+				}
+				return next();
 			}
-			let payload = Token.decode(clientSession)
 			
+			// 尝试解码
+			// err_code 1 无法解析登录态
+			let payload = ''
+			try {
+				payload = Token.decode(clientSession)
+				if (!payload || !payload.sessionKey || !payload.openid) {
+					throw new Error('登录态无法解析')
+				}
+			} catch (e) {
+				this.responseFail('登录态无法解析', 1)
+				return next();
+			}
 			
-			// 如果失效，返回err_code 1
+			// 从redis中捞取session
+			// 如果过了有效期，返回err_code 2
+			let sessionString = await this.redis.get(clientSession);
+			let session = '';
+			if (!sessionString || typeof sessionString !== 'string') {
+				this.responseFail('登录态失效', 2);
+				return next();
+			}
+			// 如果解析错误
+			try {
+				session = JSON.parse(sessionString)
+			} catch (e) {
+				this.responseFail(e.message || '登录态失效', 2);
+				return next();
+			}
 			
+			let openid = session.openid;
 			
-			// 如果没有注册，返回err_code 2
+			// 从数据库中查找openid
+			// 如果没有注册，返回err_code 3
+			let userArr = await this.UserModel.getUserByOpenid(openid);
+			if (!userArr || userArr.length === 0) {
+				this.responseFail('该用户没有登录', 3)
+				return next();
+			}
 			
-			
-			// if (result) {
-			// 	ctx.body = {
-			// 		success: true,
-			// 		data: {
-			// 			session: session3rd,
-			// 			avater: userInfo.avater,
-			// 			nickname: userInfo.address,
-			// 			adderss: userInfo.address,
-			// 			uid: userInfo.id,
-			// 		},
-			// 		message: '恭喜你，注册成功'
-			// 	}
-			// }
-			
-			
+			let user = userArr[0]
+			let data = {
+				avater: user.avater,
+				nickname: user.nickname,
+				adderss: user.address,
+				email: user.email,
+				openid: user.openid,
+			}
+			ctx.body = {
+				success: true,
+				data,
+				message: ''
+			}
 		} catch (e) {
 			ctx.body = {
 				success: false,
@@ -48,16 +82,6 @@ class userInfo extends BaseClass{
 			}
 			return next();
 		}
-	}
-	askWx () {
-		if (!this.appid || !this.appsecret || this.param.code) {
-			return false;
-		}
-		let url = `https://api.weixin.qq.com/sns/jscode2session?appid=${this.appid}&secret=${this.appsecret}&js_code=${this.param.code}`;
-		return axios({
-			method: 'get',
-			url,
-		})
 	}
 }
 

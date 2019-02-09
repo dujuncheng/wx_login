@@ -73,7 +73,7 @@ class Register extends BaseClass{
             	openid,
 		        session_key
 	        }
-	        this.redis.set(session3rd, cacheSession, 'ex', 60 * 5);
+	        this.redis.set(session3rd, JSON.stringify(cacheSession), 'ex', 60 * 5);
          
             // 从数据库中获取该用户的信息
 	        let userArr = await this.UserModel.getUserByOpenid(openid);
