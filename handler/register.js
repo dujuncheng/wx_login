@@ -12,10 +12,24 @@ class Register extends BaseClass{
     async run(ctx, next) {
         try {
             // 检查params
-            let paramsOk = this.checkParams(['email', 'password', 'code']);
+            let paramsOk = this.checkParams(['email', 'password', 'code', 'type']);
             if (!paramsOk) {
                 return next();
             }
+            
+            // type 1 是不带头像昵称的注册，type 2是带头像昵称的注册
+	        if (Number(this.param.type ) === 2) {
+	        	let avater = this.getRequestParam('avater');
+	        	let nickname = this.getRequestParam('nickname');
+	        	let address = this.getRequestParam('address');
+	        	if (!avater || !nickname || !address) {
+	        		throw new Error('参数缺失哦~');
+	        	    return
+		        }
+	            this.param.avater = avater;
+	            this.param.nickname = nickname;
+	            this.param.address = address;
+	        }
 
             if (typeof this.param.code !== 'string' ||
 	            typeof this.param.email !== 'string' ||
@@ -27,14 +41,15 @@ class Register extends BaseClass{
             
             
             // 存入redis缓存
-	        this.redis.set('foo', 'bar');
-            let foo = await this.redis.get('foo');
+	        // this.redis.set('foo', 'bar');
+            // let foo = await this.redis.get('foo');
             
-	        换取微信的openid
-            let {openid} = await this.getOpenid({code: this.param.code})
+	        // 换取微信的openid, session_key
+	        debugger
+            let {openid, session_key} = await this.getOpenid({code: this.param.code})
             let params = {
-            	openid: '',
-	            email: 'fafsdf'
+            	openid,
+	            email: this.param.email
             }
             let hasUser = await this.checkHasUser(params);
             if (hasUser) {
@@ -42,9 +57,12 @@ class Register extends BaseClass{
 	            return
             }
             let result = await this.UserModel.addNewUser({
-	            openid: '12312',
+	            openid,
 	            email: this.param.email,
 	            password: this.param.password,
+	            avater: this.param.avater || '0',
+	            nickname: this.param.nickname || '0',
+	            address: this.param.nickname || '0'
             })
 
 	        console.log(result)

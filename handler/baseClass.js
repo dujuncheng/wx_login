@@ -10,7 +10,7 @@ const redis = new Redis();
 class BaseClass {
     constructor() {
         this.appid = 'wx7d3c8e9e4b19f98d';
-        this.appsecret ='';
+        this.appsecret ='620cf69ea60ae9e54fd1cbcfcf29f254';
         this.ctx = '';
         this.param = {};
         this.UserModel = UserModel.instance();
@@ -92,11 +92,11 @@ class BaseClass {
 	 * @returns {Promise<*>}
 	 */
 	async getOpenid ({code}) {
-		debugger
-	    if (!this.appid || !this.appsecret || code) {
+	    if (!this.appid || !this.appsecret || !code) {
 		    return false;
 	    }
 	    let url = `https://api.weixin.qq.com/sns/jscode2session?appid=${this.appid}&secret=${this.appsecret}&js_code=${code}`;
+	    debugger
 	    let result = await axios({
 		    method: 'get',
 		    url,
@@ -109,7 +109,7 @@ class BaseClass {
 		    return new Error( result.data || '使用code向微信换openid失败')
 	    }
 	    
-	    return result
+	    return result.data
     }
 	
 	/**
