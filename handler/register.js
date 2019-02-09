@@ -75,12 +75,13 @@ class Register extends BaseClass{
 	        }
 	        this.redis.set(session3rd, cacheSession, 'ex', 60 * 5);
          
-         
-	        console.log(result)
 
 	        if (result) {
 		        ctx.body = {
 			        success: true,
+			        data: {
+			        	cache_session: cacheSession
+			        },
 			        message: '恭喜你，注册成功'
 		        }
 	        }
