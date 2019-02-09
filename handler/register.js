@@ -75,12 +75,23 @@ class Register extends BaseClass{
 	        }
 	        this.redis.set(session3rd, cacheSession, 'ex', 60 * 5);
          
+            // 从数据库中获取该用户的信息
+	        let userArr = await this.UserModel.getUserByOpenid(openid);
+	        if (!userArr || !Array.isArray(userArr) || userArr.length !== 1) {
+	        	throw new Error('数据库发生错误');
+		        return;
+	        }
+	        let userInfo = userArr[0];
 
 	        if (result) {
 		        ctx.body = {
 			        success: true,
 			        data: {
-			        	cache_session: session3rd
+			        	session: session3rd,
+				        avater: userInfo.avater,
+				        nickname: userInfo.address,
+				        adderss: userInfo.address,
+				        uid: userInfo.id,
 			        },
 			        message: '恭喜你，注册成功'
 		        }

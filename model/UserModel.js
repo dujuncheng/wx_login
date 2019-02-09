@@ -198,16 +198,16 @@ class UserModel {
 	}
 	
 	/**
-	 * 根据note_id 来查找数据
-	 * @param birthTime
+	 * 通过openid来查找user
+	 * @param uid
 	 * @returns {Promise<T>}
 	 */
-	async getArrByNoteId(note_id) {
-		if (_.isUndefined(note_id)) {
+	async getUserByOpenid(openid) {
+		if (_.isUndefined(openid)) {
 			throw new Error('读取数据库参数缺失');
 			return
 		}
-		let sql = `SELECT * FROM note_table WHERE note_id = '${note_id}' AND state = 1`;
+		let sql = `SELECT * FROM user WHERE openid = '${openid}' AND state = 1`;
 		
 		let res = await mysql.runSql(sql, dbConf.dbName)
 			.catch((err) => {
