@@ -12,8 +12,10 @@ class wxLogin extends BaseClass{
     async run(ctx, next) {
         try {
         	debugger
+	        // type 1 请求参数 {type, code}
+	        // type 2 请求参数 {type, code, info}
             // 检查params
-            let paramsOk = this.checkParams(['code']);
+            let paramsOk = this.checkParams(['code', 'type']);
             if (!paramsOk) {
 	            throw new Error('参数格式不正确')
                 return next();
@@ -23,19 +25,46 @@ class wxLogin extends BaseClass{
                 throw new Error('参数格式不正确')
                 return;
             }
+            
+            // 如果type是2, 则一定要有info字段
+            let info = this.getRequestParam("info");
+            if (Number(this.param.type === 2) && !info) {
+                throw new Error('请求参数缺失');
+                return;
+            }
+            
 
             // 获取openid
             let {openid, session_key} = await this.getOpenid({
 	            code: this.param.code
             })
 	        
+	        if (!openid) {
+		        throw new Error('获取openid失败')
+		        return
+	        }
+	        
 	        // err_code 1 该用户没有注册
-	        debugger
 	        let hasUser = await this.checkHasUser({openid})
 	        if (!hasUser) {
 	        	this.responseFail('该用户没有注册，去注册', 1);
 	        	return next()
 	        }
+	        
+	        // 用户已经注册，如果是type2 则需要更新用户的信息资料
+	        if (this.param.type === 2) {
+	        	let result = await this.UserModel.updateInfo({
+			        avater: info.avater,
+			        nickname: info.nickname,
+			        address: info.address,
+			        openid,
+		        })
+		        if (!result) {
+		        	throw new Error('更新用户信息失败');
+		        	return;
+		        }
+	        }
+	        
 	        // 存入redis缓存的 session3rd: {openid, session_key}
 	        let session3rd = await this.setSession({session_key, openid});
 	        

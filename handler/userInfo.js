@@ -70,6 +70,7 @@ class userInfo extends BaseClass{
 				address: user.address,
 				email: user.email,
 				openid: user.openid,
+				gmt_created: user.gmt_created,
 			}
 			ctx.body = {
 				success: true,

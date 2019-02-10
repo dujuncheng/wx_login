@@ -217,77 +217,28 @@ class UserModel {
 	}
 	
 	/**
-	 * 根据note_ids 来查找数据
-	 * @param birthTime
-	 * @returns {Promise<T>}
-	 */
-	async getArrByNoteIds(noteIds) {
-		if (_.isUndefined(noteIds)) {
-			throw new Error('读取数据库参数缺失');
-			return
-		}
-		let str = `(${noteIds.join(',')})`
-		let sql = `SELECT * FROM note_table WHERE note_id IN ${str} AND state = 1`;
-		
-		let res = await mysql.runSql(sql, dbConf.dbName)
-			.catch((err) => {
-				console.log(err);
-			});
-		return res;
-	}
-	
-	/**
-	 * 修改复习数据
-	 * @param note_id    笔记id
-	 * @param nextNotifyTime  下次的复习时间
-	 * @param reviewNum       已经复习的次数
+	 * 更新用户信息
+	 * @param avater
+	 * @param nickname
+	 * @param address
+	 * @param openid
 	 * @returns {Promise<*>}
 	 */
-	async updateBlogReviewNotice({note_id, nextNotifyTime, reviewNum, needReview, frequency}) {
-		if(_.isUndefined(note_id) || _.isUndefined(nextNotifyTime) || _.isUndefined(reviewNum)) {
+	async updateInfo({avater, nickname, address, openid}) {
+		if(_.isUndefined(avater) ||
+			_.isUndefined(nickname) ||
+			_.isUndefined(address) ||
+			_.isUndefined(openid)
+		) {
 			return false;
 		}
-		let sql = `UPDATE note_table
+		let sql = `UPDATE user
                 SET
-                notify_time = '${nextNotifyTime}',
-                review_num = '${reviewNum}',
-                need_review = '${needReview}',
-                frequency = '${frequency}',
+                avater = '${avater}',
+                nickname = '${nickname}',
+                address = '${address}',
                 gmt_modify = '${new Date().getTime() / 1000}'
-                WHERE note_id = '${note_id}'`;
-		
-		let res = await mysql.runSql(sql, dbConf.dbName)
-			.catch((err) => {
-				console.log(err);
-			});
-		return res;
-	}
-	
-	/**
-	 * 设置笔记的复习因子，1，2，3，4，5 共5个等级
-	 * @param note_id 笔记id
-	 * @param frequency 复习因子
-	 * @returns {Promise<*>}
-	 */
-	async updateBlogReviewFrequecy({note_id, frequency}) {
-		if(_.isUndefined(note_id) || _.isUndefined(frequency)) {
-			return false;
-		}
-		let sql = `UPDATE note_table
-                SET
-                frequency = '${frequency}',
-                gmt_modify = '${new Date().getTime() / 1000}'
-                WHERE note_id = '${note_id}'`;
-		
-		let res = await mysql.runSql(sql, dbConf.dbName)
-			.catch((err) => {
-				console.log(err);
-			});
-		return res;
-	}
-	
-	async getReviewList () {
-		let sql = `SELECT * FROM note_table WHERE state = 1 AND need_review = 1 AND LENGTH(content) > 0 ORDER BY notify_time`;
+                WHERE openid = '${openid}' AND state = 1`;
 		
 		let res = await mysql.runSql(sql, dbConf.dbName)
 			.catch((err) => {
