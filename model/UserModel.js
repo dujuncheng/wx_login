@@ -92,64 +92,21 @@ class UserModel {
 		return result;
 	}
 	
-	
 	/**
-	 *
-	 * @param note_id
-	 * @param content
-	 * @returns {Promise<*>}
-	 */
-	async updateNoteContent(noteIds, obj) {
-		if(_.isUndefined(noteIds)) {
-			return false;
-		}
-		let ids = `(${noteIds.join(',')})`
-		
-		let contentStr = ''
-		let keyArr = Object.keys(obj)
-		for (let i = 0; i < keyArr.length; i++) {
-			let str = ` WHEN ${keyArr[i]} THEN '${obj[keyArr[i]].content}'`
-			contentStr = contentStr + str
-		}
-		
-		let titleStr = ''
-		for (let i = 0; i < keyArr.length; i++) {
-			let str = ` WHEN ${keyArr[i]} THEN '${obj[keyArr[i]].title}'`
-			titleStr = titleStr + str
-		}
-		
-		let sql =  `UPDATE note_table
-            SET content = CASE note_id
-                ${contentStr}
-            END,
-            title = CASE note_id
-                ${titleStr}
-            END,
-            gmt_modify = '${new Date().getTime() / 1000}'
-        WHERE note_id IN ${ids}`
-		
-		let res = await mysql.runSql(sql, dbConf.dbName)
-			.catch((err) => {
-				console.log(err);
-			});
-		return res;
-	}
-	
-	/**
-	 * 更新note的状态
-	 * @param note_id
+	 * 更新用户记录的状态
+	 * @param id
 	 * @param state
 	 * @returns {Promise<*>}
 	 */
-	async updateNoteState(note_id, state) {
-		if(_.isUndefined(note_id) || _.isUndefined(state)) {
+	async updateUserState(openid, state) {
+		if(_.isUndefined(openid) || _.isUndefined(state)) {
 			return false;
 		}
-		let sql = `UPDATE note_table
+		let sql = `UPDATE user
                 SET
                 state = '${state}',
                 gmt_modify = '${new Date().getTime() / 1000}'
-                WHERE note_id = '${note_id}'`;
+                WHERE openid = '${openid}' AND state = 1`;
 		
 		let res = await mysql.runSql(sql, dbConf.dbName)
 			.catch((err) => {
@@ -176,7 +133,6 @@ class UserModel {
 		
 		return result;
 	}
-	
 	
 	/**
 	 * 查找user表中的用户
