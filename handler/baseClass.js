@@ -136,7 +136,7 @@ class BaseClass {
 	 * @param openid
 	 * @returns {Promise<*>}
 	 */
-	async setSession ({session_key, openid}) {
+	async setSession ({session_key, openid, time = 60 * 5}) {
 		let session3rd = this.get3rdSession({
 			sessionKey: session_key,
 			openid,
@@ -145,7 +145,7 @@ class BaseClass {
 			openid,
 			session_key
 		}
-		await this.redis.set(session3rd, JSON.stringify(cacheSession), 'ex', 60 * 5);
+		await this.redis.set(session3rd, JSON.stringify(cacheSession), 'ex', time);
 		return session3rd
 	}
 }
