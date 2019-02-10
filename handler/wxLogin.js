@@ -30,9 +30,11 @@ class wxLogin extends BaseClass{
             })
 	        
 	        // err_code 1 该用户没有注册
+	        debugger
 	        let hasUser = await this.checkHasUser({openid})
 	        if (!hasUser) {
-	        	this.responseFail('该用户没有注册，去注册', 1)
+	        	this.responseFail('该用户没有注册，去注册', 1);
+	        	return next()
 	        }
 	        // 存入redis缓存的 session3rd: {openid, session_key}
 	        let session3rd = await this.setSession({session_key, openid});
