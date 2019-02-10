@@ -11,7 +11,6 @@ class userInfo extends BaseClass{
 	}
 	async run(ctx, next) {
 		try {
-			debugger
 			// 检查是否登录态是否有效
 			let clientSession = ctx.headers['x-session'];
 			if (!clientSession || typeof clientSession !== 'string') {

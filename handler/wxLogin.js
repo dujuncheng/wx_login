@@ -11,7 +11,6 @@ class wxLogin extends BaseClass{
     }
     async run(ctx, next) {
         try {
-        	debugger
 	        // type 1 请求参数 {type, code}
 	        // type 2 请求参数 {type, code, info}
             // 检查params
@@ -27,7 +26,7 @@ class wxLogin extends BaseClass{
             }
             
             // 如果type是2, 则一定要有info字段
-            let info = this.getRequestParam("info");
+            let info = JSON.parse(this.getRequestParam("info"));
             if (Number(this.param.type === 2) && !info) {
                 throw new Error('请求参数缺失');
                 return;
@@ -52,7 +51,7 @@ class wxLogin extends BaseClass{
 	        }
 	        
 	        // 用户已经注册，如果是type2 则需要更新用户的信息资料
-	        if (this.param.type === 2) {
+	        if (Number(this.param.type) === 2) {
 	        	let result = await this.UserModel.updateInfo({
 			        avater: info.avater,
 			        nickname: info.nickname,
