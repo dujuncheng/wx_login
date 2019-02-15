@@ -55,6 +55,7 @@ class Register extends BaseClass{
                 throw new Error('数据库中已经存在该数据')
 	            return
             }
+            // 没有被注册，在用户表增加一条记录
             let result = await this.UserModel.addNewUser({
 	            openid,
 	            email: this.param.email,

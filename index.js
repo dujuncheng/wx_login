@@ -16,7 +16,7 @@ async function serverinit () {
     app.use(bodyParser());
     app.use(cors());
     var router = new Router();
-    router.all('/notebook', route);
+    router.all('/wxlogin', route);
 
     app.use(router.routes()).use(router.allowedMethods());
 
